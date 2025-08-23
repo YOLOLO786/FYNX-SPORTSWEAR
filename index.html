@@ -1,0 +1,698 @@
+ <!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FYNX Sportswear — One‑File Site</title>
+  <style>
+    :root{
+      --bg:#0b0e14;--bg2:#0f1320;--card:#121829;--muted:#aab2c5;--text:#e9edf6;--brand:#ff4d1c;--brand-2:#00d39b;--line:#253150;--shadow:0 14px 40px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#0b1221 60%,var(--bg));color:var(--text);}    
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+    /* Header */
+    header{position:sticky;top:0;z-index:80;background:rgba(11,14,20,.65);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 8px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:38px;height:38px;border-radius:10px;background:conic-gradient(from 120deg,var(--brand),#ff9d00,var(--brand));box-shadow:0 0 0 2px #ffffff10}
+    .brand h1{letter-spacing:3px;margin:0;font-weight:800}
+    .links{display:flex;gap:14px;flex-wrap:wrap}
+    .links a{padding:8px 12px;border-radius:999px;background:#141b2d;transition:.25s ease;border:1px solid #1c2640}
+    .links a:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#2a385f}
+
+    .actions{display:flex;align-items:center;gap:10px}
+    #search{width:320px;max-width:45vw;padding:10px 14px;border-radius:12px;border:1px solid #1d2846;background:#0c1221;color:var(--text)}
+    .cart-btn{position:relative;padding:10px 12px;border-radius:12px;border:1px solid #1d2846;background:#0c1221}
+    .badge{position:absolute;top:-6px;right:-6px;background:var(--brand);color:white;border-radius:999px;padding:2px 6px;font-size:12px;display:none}
+
+    /* Entry overlay */
+    .entry{position:fixed;inset:0;background:radial-gradient(1200px 600px at 50% -100px,#ff4d1c10 20%,transparent 60%),var(--bg);display:grid;place-items:center;z-index:200;animation:entryFade 1.4s ease .2s forwards}
+    .entry h2{font-size:42px;letter-spacing:.2em;opacity:.95}
+    @keyframes entryFade{0%{opacity:1}85%{opacity:0}100%{opacity:0;visibility:hidden}}
+
+    /* Pages */
+    main{min-height:calc(100vh - 70px)}
+    section.page{display:none;padding:56px 0}
+    section.page.active{display:block}
+
+    /* HERO + Hot carousel */
+    .hero{padding:38px 0}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px}
+    .hero-card{background:linear-gradient(135deg,#182037,#0f1424);border:1px solid var(--line);border-radius:22px;padding:30px;box-shadow:var(--shadow)}
+    .hero-card h2{font-size:40px;margin:0 0 10px}
+    .hero-card p{color:var(--muted)}
+    .carousel{position:relative;overflow:hidden;border-radius:18px;border:1px solid var(--line)}
+    .track{display:flex;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+    .slide{min-width:80%;padding:16px}
+    .slide .card{background:#0f162a;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .dots{display:flex;gap:8px;justify-content:center;margin-top:10px}
+    .dot{width:10px;height:10px;border-radius:50%;background:#26314e;border:1px solid #34456d;cursor:pointer}
+    .dot.active{background:var(--brand)}
+    .car-nav{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 6px;pointer-events:none}
+    .car-btn{background:#0b0f18cc;border:1px solid var(--line);color:white;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;pointer-events:auto;cursor:pointer}
+
+    /* Horizontal info rails */
+    .rail{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(280px,1fr);gap:16px;overflow:auto;padding-bottom:6px}
+    .rail .card{min-height:220px}
+
+    /* Product grid */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+    .card{background:linear-gradient(160deg,#121a31,#0b1324);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+    .card-body{padding:14px}
+    .title{font-weight:800}
+    .muted{color:var(--muted)}
+    .price{font-weight:800;color:#fff}
+    .btn{display:inline-flex;gap:8px;align-items:center;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:10px 14px;cursor:pointer;transition:.25s}
+    .btn.secondary{background:#162038;border:1px solid #243257}
+    .btn.ghost{background:transparent;border:1px solid #26365d}
+    .btn:hover{transform:translateY(-2px)}
+
+    /* Product page */
+    .product-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:24px}
+    .product-hero .media{background:radial-gradient(600px 200px at 50% -60px,#ff4d1c22,transparent 60%),#0d1423;border:1px solid var(--line);border-radius:22px;padding:14px}
+    .product-hero .info{background:#0f162a;border:1px solid var(--line);border-radius:22px;padding:22px}
+
+    /* Cart page */
+    .cart-table{width:100%;border-collapse:collapse}
+    .cart-table th,.cart-table td{border-bottom:1px dashed #2a3a60;padding:12px;text-align:left}
+    .cart-summary{background:#10182e;border:1px solid var(--line);border-radius:16px;padding:16px}
+
+    /* Reviews */
+    .reviews{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .review{background:#121726;border:1px solid var(--line);border-radius:16px;padding:16px}
+
+    /* Footer */
+    footer{border-top:1px solid var(--line);background:#0a0f19;padding:30px 0;margin-top:60px}
+    .socials{display:flex;gap:12px}
+    .socials a{background:#151c2d;border:1px solid #233250;width:40px;height:40px;border-radius:10px;display:grid;place-items:center}
+    .socials svg{width:20px;height:20px;fill:#cdd5e7}
+
+    /* DRAMATIC animations */
+    .animate{opacity:0;transform:translateY(12px)}
+    .a-fade{animation:aFade .9s ease forwards}
+    .a-pop{animation:aPop .8s cubic-bezier(.2,1,.22,1) forwards}
+    .a-left{animation:aLeft .9s ease forwards}
+    .a-right{animation:aRight .9s ease forwards}
+    .a-up{animation:aUp .9s ease forwards}
+    .a-down{animation:aDown .9s ease forwards}
+    .stagger>*{opacity:0}
+    @keyframes aFade{to{opacity:1;transform:none}}
+    @keyframes aPop{0%{opacity:0;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+    @keyframes aLeft{0%{opacity:0;transform:translateX(-40px)}100%{opacity:1;transform:none}}
+    @keyframes aRight{0%{opacity:0;transform:translateX(40px)}100%{opacity:1;transform:none}}
+    @keyframes aUp{0%{opacity:0;transform:translateY(40px)}100%{opacity:1;transform:none}}
+    @keyframes aDown{0%{opacity:0;transform:translateY(-40px)}100%{opacity:1;transform:none}}
+
+    /* Utilities */
+    .chip{display:inline-flex;gap:8px;align-items:center;background:#101626;border:1px solid #23304c;border-radius:999px;padding:6px 10px;font-size:12px;color:#c8d0df}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .mt-1{margin-top:8px}.mt-2{margin-top:12px}.mt-3{margin-top:18px}.mt-4{margin-top:26px}.mt-5{margin-top:40px}
+    .mb-1{margin-bottom:8px}.mb-2{margin-bottom:12px}.mb-3{margin-bottom:18px}.mb-4{margin-bottom:26px}.mb-5{margin-bottom:40px}
+  </style>
+</head>
+<body>
+  <div class="entry"><h2 class="animate a-pop">F Y N X — IGNITE PERFORMANCE</h2></div>
+
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo"></div>
+        <h1>FYNX</h1>
+      </div>
+      <nav class="links">
+        <a href="#/home">Home</a>
+        <a href="#/men">Men</a>
+        <a href="#/women">Women</a>
+        <a href="#/shoes">Shoes</a>
+        <a href="#/accessories">Accessories</a>
+        <a href="#/about">Customer Care</a>
+        <a href="#/cart">Cart</a>
+      </nav>
+      <div class="actions">
+        <input id="search" placeholder="Search all products…" />
+        <button id="open-cart" class="cart-btn" onclick="location.hash='#/cart'">🛒<span id="cart-badge" class="badge">0</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HOME PAGE -->
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <div class="hero-grid">
+          <div class="hero-card animate a-left">
+            <span class="chip">NEW • SS25</span>
+            <h2>Engineered for Motion</h2>
+            <p class="muted">Performance-first sportswear blended with bold street DNA. Breathable fabrics, precision fit, and impact-ready footwear—designed to disappear so your focus doesn’t.</p>
+            <div class="row mt-3">
+              <a class="btn" href="#/men">Shop Men</a>
+              <a class="btn secondary" href="#/women">Shop Women</a>
+            </div>
+            <div class="row mt-3">
+              <span class="chip">Free shipping $99+</span>
+              <span class="chip">30-day trial</span>
+              <span class="chip">1-year warranty</span>
+            </div>
+          </div>
+          <div class="carousel animate a-right" id="hot-carousel">
+            <div class="track" id="hot-track"></div>
+            <div class="car-nav">
+              <button class="car-btn" data-dir="-1">❮</button>
+              <button class="car-btn" data-dir="1">❯</button>
+            </div>
+            <div class="dots" id="hot-dots"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 animate a-up">
+  <h3 class="mb-2">Why FYNX (Features)</h3>
+  <div class="features-vertical">
+
+    <div class="card animate a-pop">
+      <div class="card-body">
+        <div class="title">AeroWeave™</div>
+        <p class="muted">
+          AeroWeave™ is not just another fabric—it’s a performance revolution. Built with next-gen fibers that channel airflow based on your body’s heat map, it actively works to cool you down where you sweat the most. Unlike traditional sportswear that simply absorbs sweat, AeroWeave™ prevents cling, keeps the garment light, and accelerates evaporation. Imagine running on a hot day: instead of your shirt getting heavier with every mile, AeroWeave™ ensures you stay cool, dry, and free to move. Athletes describe it as a "second skin that breathes for you." With this innovation, every sprint, stretch, and stride feels effortless. (…expand up to ~500 words here with human-friendly tone, real-life use cases, training scenarios, and comfort benefits.)
+        </p>
+      </div>
+    </div>
+
+    <div class="card animate a-right">
+      <div class="card-body">
+        <div class="title">FlexMesh Pro</div>
+        <p class="muted">
+          FlexMesh Pro takes stretch and recovery to the next level. Built with four-way stretch technology and memory retention, this material flexes when your body demands it—like during explosive sprints or deep lunges—then bounces back to shape the moment you stop. No sagging, no bagging, no fading performance even after dozens of washes. Think of it as a fabric that evolves with your training routine, molding to your movements without losing structure. Gym enthusiasts love how it feels snug yet unrestricted, while runners appreciate that it moves seamlessly with every stride. (…expand ~500 words in natural language: use storytelling about durability, comfort during HIIT sessions, yoga practice, and everyday wear.)
+        </p>
+      </div>
+    </div>
+
+    <div class="card animate a-left">
+      <div class="card-body">
+        <div class="title">GripFlow Outsoles</div>
+        <p class="muted">
+          The GripFlow outsole is engineered to give athletes confidence on any surface. Using directional traction channels, it actively pushes out water, dirt, and debris so that every cut, sprint, or landing feels secure. Court players notice sharper pivots; trail runners feel surefooted on wet terrain; gym users get grip that doesn’t quit during heavy lifts. Unlike ordinary rubber soles, GripFlow adapts to dynamic pressure points, almost "reading" your footwork to give you stability where you need it most. (…expand ~500 words with relatable sports examples—basketball, running, training—so the customer sees themselves using it.)
+        </p>
+      </div>
+    </div>
+
+    <div class="card animate a-down">
+      <div class="card-body">
+        <div class="title">Sustain Built</div>
+        <p class="muted">
+          Sustainability is no longer optional—it’s essential. With Sustain Built, FYNX combines eco-friendly design with peak performance. Every thread comes from recycled yarns, every dye process minimizes environmental impact, and modular patterns cut down fabric waste. Yet, none of this compromises quality. In fact, athletes wearing Sustain Built gear often say it feels more premium and resilient than conventional sportswear. Choosing FYNX means you’re not just investing in performance, but also protecting the planet for the next generation of athletes. (…expand ~500 words with storytelling: why sustainability matters, how it impacts athletes emotionally, and how FYNX balances eco and performance.)
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+      <!-- HOW OUR PRODUCTS ARE MADE -->
+<div class="mt-5 animate a-fade">
+  <h3 class="mb-2">How Our Products Are Made</h3>
+
+  <!-- Intro -->
+  <div class="mt-2 animate a-up">
+    <p class="muted">
+      Every FYNX product is designed with one mission: to move with you and never hold you back. 
+      From raw fibers to finished apparel, our process combines science, craft, and athlete feedback. 
+      Here’s a behind-the-scenes look at how your gear comes to life.
+    </p>
+  </div>
+
+  <!-- Material Sourcing -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Material Sourcing</div>
+      <p class="muted">
+        We carefully partner with mills that certify recycled and ethically sourced fibers. 
+        Each fabric lot is batch-tested for durability, breathability, and colorfastness before 
+        it ever reaches our cutting floor. This ensures that every shirt, short, or shoe begins 
+        with premium, responsible materials you can trust.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pattern Engineering -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Pattern Engineering</div>
+      <p class="muted">
+        Performance starts in the blueprint. Our design team maps every panel to the human 
+        body in motion—studying stretch, friction, and airflow. Seam lines are strategically 
+        placed to avoid irritation, while ventilation zones align with heat spikes. The result: 
+        gear that feels like a natural extension of your body.
+      </p>
+    </div>
+  </div>
+
+  <!-- Field Testing -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Field Testing</div>
+      <p class="muted">
+        Before a product reaches your hands, it’s tested by runners, hoopers, lifters, and 
+        everyday athletes in all climates. We gather detailed feedback on fit, durability, 
+        and moisture control, then refine until the gear disappears in use. Only the versions 
+        that perform in the real world earn the FYNX label.
+      </p>
+    </div>
+  </div>
+
+  <!-- Sustainability -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Sustainability</div>
+      <p class="muted">
+        Each stage is built with sustainability in mind. By prioritizing recycled fibers, 
+        low-waste cutting, and water-saving dye processes, we reduce our footprint while 
+        maximizing performance. Because creating high-performance gear should never come at 
+        the cost of the planet.
+      </p>
+    </div>
+  </div>
+</div>
+
+
+      <div class="mt-5 animate a-up">
+        <h3 class="mb-2">Customer Reviews</h3>
+        <div class="reviews">
+          <div class="review animate a-left"><strong>Alina</strong><p class="muted">“The leggings breathe and don’t slide. I ran a 10k—no chafing. Fabric still looks new after five washes.”</p></div>
+          <div class="review animate a-pop"><strong>Omar</strong><p class="muted">“GripFlow soles are insane. Stop‑start on court feels planted. Cushion without the mush.”</p></div>
+          <div class="review animate a-right"><strong>Zara</strong><p class="muted">“The jacket packs tiny and blocks wind on my bike commute. Premium finish that rivals the big brands.”</p></div>
+        </div>
+      </div>
+
+      <div class="mt-5 animate a-up" id="contact">
+        <h3>Visit & Contact</h3>
+        <p class="muted">Email: support@fynx.com • Phone: +123 456 7890 • Live chat: 9am–6pm Mon–Sat</p>
+        <div class="grid">
+          <div class="card"><div class="card-body"><div class="title">Head Office</div><p class="muted">123 Peak Drive, Suite 12, San Francisco, CA</p><p class="muted">Wholesale, partnerships, and press: partners@fynx.com</p></div></div>
+          <div class="card"><div class="card-body"><div class="title">Support Promise</div><p class="muted">Real humans. We answer within 24h. Fit advice, order changes, sizing swaps—all covered by our 30‑day trial policy.</p></div></div>
+        </div>
+        <iframe style="width:100%;height:240px;border:1px solid var(--line);border-radius:14px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d96777.7483947356!2d-122.5076406!3d37.7576793!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e2a0b6a6b1f%3A0x7a5b2b7e0dfd0a4!2sSan%20Francisco!5e0!3m2!1sen!2sus!4v1681567890123" allowfullscreen="" loading="lazy"></iframe>
+      </div>
+    </section>
+
+    <!-- CATEGORY PAGES -->
+    <section id="page-men" class="page">
+      <h2 class="mb-2 animate a-left">Men</h2>
+      <p class="muted mb-3 animate a-up">Built for training days and street play. Streamlined fits, breathable knits, and weather‑ready shells for performance anywhere.</p>
+      <div id="grid-men" class="grid"></div>
+    </section>
+
+    <section id="page-women" class="page">
+      <h2 class="mb-2 animate a-left">Women</h2>
+      <p class="muted mb-3 animate a-up">From studio sessions to long runs, apparel that supports, sculpts, and cools. Zero distraction. Max focus.</p>
+      <div id="grid-women" class="grid"></div>
+    </section>
+
+    <section id="page-shoes" class="page">
+      <h2 class="mb-2 animate a-left">Shoes</h2>
+      <p class="muted mb-3 animate a-up">Energy return midsoles, directional traction, and dialed fits for road, trail, and court. Land soft, push hard.</p>
+      <div id="grid-shoes" class="grid"></div>
+    </section>
+
+    <section id="page-accessories" class="page">
+      <h2 class="mb-2 animate a-left">Accessories</h2>
+      <p class="muted mb-3 animate a-up">Dial in the details: hydration, bags, and training tools that level up your kit.</p>
+      <div id="grid-accessories" class="grid"></div>
+    </section>
+
+    <!-- PRODUCT DETAIL PAGE (full page) -->
+    <section id="page-product" class="page">
+      <div class="product-hero animate a-pop">
+        <div class="media"><img id="pd-img" alt="Product image"></div>
+        <div class="info">
+          <span class="chip" id="pd-cat">Category</span>
+          <h2 id="pd-title" class="mt-2"></h2>
+          <p id="pd-desc" class="muted mt-1"></p>
+          <div class="mt-2"><strong id="pd-price" class="price"></strong></div>
+          <div class="row mt-3">
+            <button id="pd-add" class="btn">Add to Cart</button>
+            <a id="pd-back" class="btn secondary" href="#/home">Back</a>
+          </div>
+          <div class="mt-3">
+            <h4>What makes it special</h4>
+            <p class="muted">Precision‑placed ventilation, abrasion‑resistant stitching, and motion‑mapped panels for a fit that moves with you. Tested by athletes across climates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CART PAGE (full page) -->
+    <section id="page-cart" class="page">
+      <h2 class="mb-2 animate a-left">Your Cart</h2>
+      <div class="grid">
+        <div class="card animate a-up">
+          <div class="card-body">
+            <table class="cart-table" id="cart-table">
+              <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th></th></tr></thead>
+              <tbody id="cart-rows"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="cart-summary animate a-right">
+          <h3>Order Summary</h3>
+          <div class="row mt-2" style="justify-content:space-between"><span class="muted">Items</span><strong id="sum-items">0</strong></div>
+          <div class="row" style="justify-content:space-between"><span class="muted">Subtotal</span><strong id="sum-sub">$0.00</strong></div>
+          <div class="row" style="justify-content:space-between"><span class="muted">Shipping</span><strong id="sum-ship">$0.00</strong></div>
+          <div class="row" style="justify-content:space-between"><span class="muted">Total</span><strong id="sum-total">$0.00</strong></div>
+          <button class="btn mt-3" style="width:100%">Checkout</button>
+          <a class="btn ghost mt-2" href="#/home" style="width:100%;text-align:center">Continue Shopping</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT / CUSTOMER CARE -->
+<section id="page-about" class="page">
+  <h2 class="animate a-left">Customer Care</h2>
+
+  <!-- Intro -->
+  <div class="mt-3 animate a-up">
+    <p class="muted">
+      At FYNX, Customer Care is more than just policies—it’s a promise. 
+      We want every step of your journey with us, from ordering online to 
+      wearing your gear in the real world, to feel effortless and supported. 
+      That means clear communication, fair policies, and a team that treats 
+      you like part of our community. Below, you’ll find everything you 
+      should know about how we take care of you.
+    </p>
+  </div>
+
+  <!-- Shipping -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Shipping</div>
+      <p class="muted">
+        We provide free standard shipping on orders over $99, with express 
+        upgrades available. Most orders leave our warehouse within 24 hours 
+        in eco-friendly, recyclable packaging. Real-time tracking updates 
+        are sent straight to your inbox so you’re never left wondering where 
+        your gear is.
+      </p>
+    </div>
+  </div>
+
+  <!-- Returns & Exchanges -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Exchanges & Returns</div>
+      <p class="muted">
+        Your comfort comes first. Try our products for 30 days, train in them, 
+        and see how they perform. If they’re not right for you, simply return 
+        them—no questions asked. We include a prepaid label and offer instant 
+        store credit or full refunds so you can get moving again without delay.
+      </p>
+    </div>
+  </div>
+
+  <!-- Warranty -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Warranty</div>
+      <p class="muted">
+        Every FYNX product is built to last. That’s why we cover all apparel 
+        and footwear with a 1-year warranty against manufacturing defects. 
+        Whenever possible, we repair first to reduce waste; if repair isn’t 
+        possible, we’ll replace or refund your item quickly.
+      </p>
+    </div>
+  </div>
+
+  <!-- Sustainability -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Sustainability</div>
+      <p class="muted">
+        Caring for you means caring for the planet, too. From recycled 
+        fibers and water-saving dye processes to low-waste cutting methods, 
+        sustainability is built into every product. Even our packaging is 
+        curbside recyclable and printed with eco-friendly inks.
+      </p>
+    </div>
+  </div>
+
+  <!-- Contact Us -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Contact Us</div>
+      <p class="muted">
+        Have a question about sizing, tracking, or care? Our team is here 
+        7 days a week.  
+        <br>Email: <strong>support@fynx.com</strong>  
+        Phone: <strong>+123 456 7890</strong>  
+        Live Chat: <strong>9am – 6pm (Mon–Sun)</strong>  
+        Address: 123 Peak Drive, Suite 12, San Francisco, CA
+      </p>
+      <p class="muted">
+        We usually reply within 24 hours. For fit advice, include your height, 
+        weight, and style preference so we can give you tailored guidance.
+      </p>
+    </div>
+  </div>
+
+  <!-- Our Promise -->
+  <div class="card animate a-up mt-3">
+    <div class="card-body">
+      <div class="title">Our Promise</div>
+      <p class="muted">
+        From the first stitch to the final mile, our mission is to keep you 
+        focused on what matters—your performance. If our gear doesn’t deliver, 
+        we’ll make it right through repair, replacement, or refund. That’s the 
+        FYNX promise: no athlete left unsupported.
+      </p>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="mt-4 animate a-up">
+    <iframe style="width:100%;height:260px;border:1px solid var(--line);border-radius:14px"
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d96777.7483947356!2d-122.5076406!3d37.7576793!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808f7e2a0b6a6b1f%3A0x7a5b2b7e0dfd0a4!2sSan%20Francisco!5e0!3m2!1sen!2sus!4v1681567890123"
+      allowfullscreen loading="lazy">
+    </iframe>
+  </div>
+</section>
+
+
+  <footer>
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+      <p>© 2025 FYNX Sportswear</p>
+      <div class="socials">
+        <!-- Instagram -->
+        <a href="#" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zm0 2A3.5 3.5 0 1 0 15.5 13 3.5 3.5 0 0 0 12 9.5zm6.25-3.25a1.25 1.25 0 1 1-1.25 1.25 1.25 1.25 0 0 1 1.25-1.25z"/></svg>
+        </a>
+        <!-- X / Twitter -->
+        <a href="#" aria-label="X" title="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h4.7l5.2 6.9L18.6 3H21l-7.8 10.3L21 21h-4.7l-5.4-7.2L5.4 21H3l8.1-10.7z"/></svg>
+        </a>
+        <!-- Facebook -->
+        <a href="#" aria-label="Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7h-2.1V12h2.1V9.7c0-2.1 1.2-3.3 3.1-3.3.9 0 1.8.16 1.8.16v2h-1c-1 0-1.4.63-1.4 1.3V12h2.4l-.4 2.9h-2v7A10 10 0 0 0 22 12z"/></svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // ---------- DATA (≈30 products) ----------
+  const PRODUCTS = [
+    // MEN
+    {id:1, name:"AeroWeave Tee", cat:"men", price:39, img:"https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=1000&q=80", desc:"Featherweight tee with mesh ventilation panels. Breathable, quick‑dry knit designed for tempo days and hot gyms."},
+    {id:2, name:"FlexMesh Shorts", cat:"men", price:45, img:"https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=1000&q=80", desc:"4‑way stretch with bonded seams for zero rub. Secure zip pocket for keys and gels."},
+    {id:3, name:"TrackLite Jacket", cat:"men", price:119, img:"https://images.unsplash.com/photo-1603252109303-2751441dd157?auto=format&fit=crop&w=1000&q=80", desc:"Wind‑resist shell, packable hood, reflective trims. Packs small into its own pocket."},
+    {id:4, name:"Court Grip Pants", cat:"men", price:69, img:"https://images.unsplash.com/photo-1542219550-37153d387c0b?auto=format&fit=crop&w=1000&q=80", desc:"Tapered fit with ankle zips and zip pockets. Built for warm‑ups and cooldowns."},
+    {id:5, name:"Power Hoodie", cat:"men", price:79, img:"https://images.unsplash.com/photo-1540574163026-643ea20ade25?auto=format&fit=crop&w=1000&q=80", desc:"Warm fleece with moisture control lining. Lounge‑worthy comfort, gym‑ready durability."},
+    {id:6, name:"Sprint Tank", cat:"men", price:29, img:"https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1000&q=80", desc:"Sweat‑wicking knit and anti‑odor treatment. Ideal for heat training."},
+    {id:7, name:"Pro Baselayer", cat:"men", price:49, img:"https://images.unsplash.com/photo-1571907480495-3a53c8c6a5b1?auto=format&fit=crop&w=1000&q=80", desc:"Compression top for muscle support and recovery. Flatlock seams for comfort."},
+    {id:8, name:"Velocity Joggers", cat:"men", price:72, img:"https://images.unsplash.com/photo-1517343985841-fc6f5b6c4c33?auto=format&fit=crop&w=1000&q=80", desc:"Streamlined fit with breathable knee panels and stretch cuffs."},
+    // WOMEN
+    {id:9, name:"Flow Leggings", cat:"women", price:59, img:"https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1000&q=80", desc:"Seamless contouring with high waist support. Squat‑proof and breathable."},
+    {id:10, name:"AeroBra Pro", cat:"women", price:48, img:"https://images.unsplash.com/photo-1518314916381-77a37c2a49ae?auto=format&fit=crop&w=1000&q=80", desc:"High‑impact support with cool‑touch lining. Adjustable straps for custom fit."},
+    {id:11, name:"Breathe Tank", cat:"women", price:32, img:"https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&w=1000&q=80", desc:"Mesh back & side slits for airflow during hot sessions."},
+    {id:12, name:"Studio Crew", cat:"women", price:64, img:"https://images.unsplash.com/photo-1530475323485-d85b3c7d831e?auto=format&fit=crop&w=1000&q=80", desc:"Ultra‑soft fleece with cropped silhouette. Everyday comfort."},
+    {id:13, name:"Trail Shell", cat:"women", price:115, img:"https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=1000&q=80", desc:"Rain‑ready jacket with stow hood and taped seams."},
+    {id:14, name:"Glide Skort", cat:"women", price:44, img:"https://images.unsplash.com/photo-1585086374960-78846ba5a36b?auto=format&fit=crop&w=1000&q=80", desc:"Built‑in shorts, phone pocket, featherlight feel."},
+    {id:15, name:"Warmup Joggers", cat:"women", price:68, img:"https://images.unsplash.com/photo-1520975922325-24baf08ac0d5?auto=format&fit=crop&w=1000&q=80", desc:"Relaxed fit with cuffed hems, plush interior, zip stash."},
+    // SHOES
+    {id:16, name:"GripFlow Runner", cat:"shoes", price:129, img:"https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=1000&q=80", desc:"Energy return midsole + directional outsole lugs for all‑weather grip."},
+    {id:17, name:"Court Pro High", cat:"shoes", price:139, img:"https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80", desc:"High‑top stability and ankle support for lateral moves."},
+    {id:18, name:"Street Glide", cat:"shoes", price:99, img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80", desc:"Daily sneaker with impact foam. Cushioned yet responsive."},
+    {id:19, name:"Trailclaw GTX", cat:"shoes", price:149, img:"https://images.unsplash.com/photo-1526404079160-ff8f3aee0b3f?auto=format&fit=crop&w=1000&q=80", desc:"Waterproof hiker with rock plate and toe guard."},
+    {id:20, name:"Sprint Spike", cat:"shoes", price:119, img:"https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&w=1000&q=80", desc:"Track spikes for PR‑hunters. Featherlight upper."},
+    // ACCESSORIES
+    {id:21, name:"Hydra Bottle 1L", cat:"accessories", price:22, img:"https://images.unsplash.com/photo-1542996966-2e31c00bae28?auto=format&fit=crop&w=1000&q=80", desc:"Vacuum insulated steel with flip straw. Sweat‑free exterior."},
+    {id:22, name:"Pro Gym Bag", cat:"accessories", price:58, img:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1000&q=80", desc:"Wet pocket + shoe tunnel. Carry‑on compatible."},
+    {id:23, name:"Aero Cap", cat:"accessories", price:24, img:"https://images.unsplash.com/photo-1534215754734-18e55d13e346?auto=format&fit=crop&w=1000&q=80", desc:"Laser‑cut vents and quick‑dry fabric for hot days."},
+    {id:24, name:"Grip Wristbands", cat:"accessories", price:12, img:"https://images.unsplash.com/photo-1541085388144-87d3e4b4a0a1?auto=format&fit=crop&w=1000&q=80", desc:"Sweat control terry set of 2 with soft stretch."},
+    {id:25, name:"Lite Socks (3‑pack)", cat:"accessories", price:18, img:"https://images.unsplash.com/photo-1556306535-abccb0bba0af?auto=format&fit=crop&w=1000&q=80", desc:"Cushioned heel & arch support. Breathable knit."},
+    // MORE
+    {id:26, name:"Pro Headband", cat:"accessories", price:14, img:"https://images.unsplash.com/photo-1559087867-ce4b3be86c93?auto=format&fit=crop&w=1000&q=80", desc:"Silicone grip, no‑slip design for intense sessions."},
+    {id:27, name:"Studio Mat", cat:"accessories", price:39, img:"https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1000&q=80", desc:"Non‑slip natural rubber base with alignment guide."},
+    {id:28, name:"Recovery Roller", cat:"accessories", price:29, img:"https://images.unsplash.com/photo-1571450669799-4b58a87b0fbe?auto=format&fit=crop&w=1000&q=80", desc:"Textured foam for deep tissue recovery and mobility."},
+    {id:29, name:"Velocity Tee", cat:"men", price:36, img:"https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=1000&q=80", desc:"Quick‑dry knit with UV guard for outdoor training."},
+    {id:30, name:"Luxe Fleece Jogger", cat:"women", price:74, img:"https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=1000&q=80", desc:"Buttery‑soft fleece, tapered fit, lounge to lift."},
+  ];
+
+  // ---------- STATE ----------
+  const state = { cart: {}, route: location.hash || '#/home' };
+
+  // ---------- HELPERS ----------
+  const $ = (q,root=document)=>root.querySelector(q);
+  const $$ = (q,root=document)=>Array.from(root.querySelectorAll(q));
+  const fmt = n => `$${n.toFixed(2)}`;
+
+  // ---------- ROUTER ----------
+  function setRoute(hash){ state.route=hash; renderRoute(); window.scrollTo({top:0,behavior:'smooth'}); }
+  window.addEventListener('hashchange',()=>setRoute(location.hash||'#/home'));
+
+  function renderRoute(){
+    $$('.page').forEach(s=>s.classList.remove('active'));
+    const r = (state.route||'#/home').split('/');
+    if(r[1]==='product'){ openProduct(+r[2]); $('#page-product').classList.add('active'); resetAnimations(); return; }
+    const map={home:'#page-home', men:'#page-men', women:'#page-women', shoes:'#page-shoes', accessories:'#page-accessories', about:'#page-about', cart:'#page-cart'};
+    ($(map[r[1]])||$('#page-home')).classList.add('active');
+    resetAnimations();
+  }
+
+  // ---------- CART ----------
+  function addToCart(id, qty=1){ state.cart[id]=(state.cart[id]||0)+qty; renderCart(); }
+  function removeFromCart(id){ delete state.cart[id]; renderCart(); }
+  function updateQty(id,delta){ state.cart[id]=Math.max(0,(state.cart[id]||0)+delta); if(state.cart[id]===0) delete state.cart[id]; renderCart(); }
+  function cartCount(){ return Object.values(state.cart).reduce((a,b)=>a+b,0); }
+  function cartTotal(){ return Object.entries(state.cart).reduce((sum,[id,qty])=>{ const p=PRODUCTS.find(x=>x.id==id); return sum + (p?p.price*qty:0); },0); }
+
+  function renderCart(){
+    // badge
+    const badge=$('#cart-badge'); const cc=cartCount(); badge.style.display=cc?"inline-block":"none"; badge.textContent=cc;
+    // page table
+    const tbody=$('#cart-rows'); if(!tbody) return; tbody.innerHTML='';
+    let items=0, sub=0;
+    for(const [id,qty] of Object.entries(state.cart)){
+      const p=PRODUCTS.find(x=>x.id==id); items+=qty; sub+=p.price*qty;
+      const tr=document.createElement('tr'); tr.innerHTML=
+        `<td><div class="row" style="align-items:center"><img src="${p.img}" alt="${p.name}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:1px solid var(--line)"><div><strong>${p.name}</strong><div class='muted'>${p.cat}</div></div></div></td>
+         <td><div class='row'><button class='btn ghost' data-dec='${p.id}'>-</button><span style='padding:8px 12px;border:1px solid var(--line);border-radius:10px'>${qty}</span><button class='btn ghost' data-inc='${p.id}'>+</button></div></td>
+         <td>${fmt(p.price)}</td>
+         <td>${fmt(p.price*qty)}</td>
+         <td><button class='btn secondary' data-rm='${p.id}'>Remove</button></td>`;
+      tbody.appendChild(tr);
+    }
+    $('#sum-items').textContent=items;
+    $('#sum-sub').textContent=fmt(sub);
+    const ship = sub>99?0:7.99;
+    $('#sum-ship').textContent=fmt(ship);
+    $('#sum-total').textContent=fmt(sub+ship);
+
+    // wire buttons
+    $$("[data-dec]").forEach(b=>b.onclick=()=>updateQty(b.dataset.dec,-1));
+    $$("[data-inc]").forEach(b=>b.onclick=()=>updateQty(b.dataset.inc,1));
+    $$("[data-rm]").forEach(b=>b.onclick=()=>removeFromCart(b.dataset.rm));
+  }
+
+  // ---------- CATEGORY GRIDS ----------
+  function productCard(p){
+    const el=document.createElement('div'); el.className='card animate a-up';
+    el.innerHTML=`<img src="${p.img}" alt="${p.name}">
+      <div class="card-body">
+        <div class="title">${p.name}</div>
+        <div class="muted">${p.desc}</div>
+        <div class="row mt-2" style="align-items:center;justify-content:space-between">
+          <div class="price">${fmt(p.price)}</div>
+          <div class="row">
+            <button class="btn" aria-label="Add to cart">Add</button>
+            <a class="btn secondary" href="#/product/${p.id}">View</a>
+          </div>
+        </div>
+      </div>`;
+    el.querySelector('button').onclick=()=>addToCart(p.id,1);
+    return el;
+  }
+
+  function fillCategory(cat, mount){ mount.innerHTML=''; PRODUCTS.filter(p=>p.cat===cat).forEach(p=>mount.appendChild(productCard(p))); }
+
+  // ---------- HOT ITEMS CAROUSEL ----------
+  function initCarousel(){
+    const HOT = PRODUCTS.slice(0,8);
+    const track=$('#hot-track'); const dots=$('#hot-dots'); track.innerHTML=''; dots.innerHTML='';
+    HOT.forEach(p=>{
+      const slide=document.createElement('div'); slide.className='slide animate a-up';
+      slide.innerHTML=`<div class="card"><img src="${p.img}" alt="${p.name}"><div class="card-body"><div class="title">${p.name}</div><p class='muted'>${p.desc}</p><div class="row mt-2" style="justify-content:space-between"><span class="price">${fmt(p.price)}</span><a class="btn secondary" href="#/product/${p.id}">View</a></div></div></div>`;
+      track.appendChild(slide);
+      const d=document.createElement('div'); d.className='dot'; dots.appendChild(d);
+    });
+    let i=0; const slides=HOT.length;
+    function go(idx){ i=(idx+slides)%slides; track.style.transform=`translateX(${-i*82}%)`; $$('#hot-dots .dot').forEach((e,ix)=>e.classList.toggle('active',ix===i)); }
+    go(0);
+    $('#hot-carousel').querySelectorAll('.car-btn').forEach(btn=>btn.onclick=()=>go(i+Number(btn.dataset.dir)));
+    $$('#hot-dots .dot').forEach((d,ix)=>d.onclick=()=>go(ix));
+  }
+
+  // ---------- PRODUCT PAGE ----------
+  function openProduct(id){
+    const p=PRODUCTS.find(x=>x.id===id); if(!p) return;
+    $('#pd-img').src=p.img; $('#pd-title').textContent=p.name; $('#pd-desc').textContent=p.desc + " \n\nBuilt with abrasion‑resistant stitching and mapped ventilation, this piece stays comfortable when the pace heats up. Pair with matching layers for year‑round training.";
+    $('#pd-price').textContent=fmt(p.price);
+    $('#pd-cat').textContent=p.cat;
+    $('#pd-back').href=`#/${p.cat}`;
+    $('#pd-add').onclick=()=>addToCart(p.id,1);
+  }
+
+  // ---------- LIVE SEARCH ----------
+  $('#search').addEventListener('input', e=>{
+    const q = e.target.value.toLowerCase().trim();
+    ['men','women','shoes','accessories'].forEach(cat=>{
+      const mount = document.getElementById('grid-'+cat); if(!mount) return; mount.innerHTML='';
+      PRODUCTS.filter(p=>p.cat===cat && (p.name+" "+p.desc).toLowerCase().includes(q))
+        .forEach(p=>mount.appendChild(productCard(p)));
+    });
+  });
+
+  // ---------- SCROLL/VIEW ANIMATIONS with reset + stagger ----------
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(ent=>{
+      const el=ent.target;
+      if(ent.isIntersecting){
+        // stagger children if container has .stagger
+        if(el.classList.contains('stagger')){
+          [...el.children].forEach((c,i)=>{ c.style.animationDelay = (i*0.08)+'s'; c.classList.add('a-up'); c.style.opacity=1; });
+        } else {
+          const classes = el.dataset.anim ? el.dataset.anim.split(' ') : ['a-pop'];
+          el.classList.add(...classes);
+        }
+      } else {
+        el.classList.remove('a-fade','a-pop','a-left','a-right','a-up','a-down');
+        if(el.classList.contains('stagger')){ [...el.children].forEach(c=>{ c.style.animationDelay='0s'; c.classList.remove('a-up'); c.style.opacity=0; });}
+      }
+    });
+  },{threshold:.25});
+
+  function resetAnimations(){ $$('.animate, .stagger').forEach(el=>io.observe(el)); }
+
+  // ---------- INIT ----------
+  function renderAllPages(){
+    fillCategory('men', $('#grid-men'));
+    fillCategory('women', $('#grid-women'));
+    fillCategory('shoes', $('#grid-shoes'));
+    fillCategory('accessories', $('#grid-accessories'));
+  }
+
+  renderAllPages();
+  initCarousel();
+  renderCart();
+  resetAnimations();
+  renderRoute();
+
+  // expose
+  window.fynx={state,addToCart};
+  </script>
+</body>
+</html>
